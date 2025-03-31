@@ -26,12 +26,13 @@ def check_for_dir_file_to_save(path:str, check_dir:str, replace_existing:bool=Fa
             return False
     return True
 
-def close():
+def close(sayGoodbye:bool=True):
     """
     Deletes the __pychace__ folder.\\
     Call this when closing the program.
     """
     shutil.rmtree("./scripts/__pycache__")
+    print("Done!")
 
 def read(path : str) -> list[str] :
     """

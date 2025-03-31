@@ -25,6 +25,11 @@ def roundScientific(number:float, significantFigures:int, putDotAfterFirstDigit:
         negative = True
         numberString = numberString[1:]
 
+    # remove exponential notation
+    if "e" in numberString:
+        e = abs(int(numberString[numberString.index("e")+1:]))
+        numberString = f"{number:.{e}f}"
+
     # count sigs
     sigs = 0
     canIncrement = False
@@ -55,7 +60,9 @@ def roundScientific(number:float, significantFigures:int, putDotAfterFirstDigit:
         end = firstSig + significantFigures
         # take one more digit if a dot in included into the sig digits space
         if numberString[end] == ".": end += 1
-        #if "." in ns[firstSig:end]: end += 1
+        #######
+        if "." in numberString[firstSig:end]: end += 1
+        #######
         digits = list(numberString)[:end]
         # increase them from the end to the start in a cascade in the digits after is >= 5
         if int(numberString[end]) >= 5:
@@ -177,11 +184,14 @@ def get_value_errors_from_tuple(measure:tuple[float], unit:str=None, name:str=No
     """
     Creates a format string with the that shows a measurement in a simple way.\\
     The f-string pattern is the following:\\
-    "{name} = ({value_0} ± {error_0}){unit}"
+    "{name} = ({value} ± {error}){unit}"
 
     Params:
         measure (tuple[float]) : the measurement to put in the string. The tuple MUST contain the pair (value, error)
-        unit (str) : the measurement unit
+        unit (str) : the measure unit
+        name (str) : the measure name
+        significantFigures (int) : the number of significant figures the numbers will be rounded to
+        forceScientificNotation (bool) : if set to True it forces the rounding algorithm to use scientific notation where possible
 
     Returns:
         output (str) : a format string displaying the measure
@@ -211,8 +221,8 @@ def get_value_errors_from_list(measurements:list[tuple[float]], units:list[str]=
 
     Params:
         measurements (list[tuple[float]]) : the measurements to put in the string. Every tuple MUST contain the pair(s) (value, error)
-        units (list[str]) : the measurements units
-        names (list[str]) : the measurements names
+        units (list[str]) : the measurements units (you can put just one element and it will be repeated)
+        names (list[str]) : the measurements names (you can put just one element and it will be repeated with an "_i" at the end)
         separator (str) : a char sequence that separates the measures
         ending (str) : a char sequence to end the string with
 
@@ -222,8 +232,8 @@ def get_value_errors_from_list(measurements:list[tuple[float]], units:list[str]=
     if units == None: units = [""] * len(measurements)
     if len(units) == 1: units = [units[0]] * len(measurements)
 
-    if len(names) == 1: names = [names[0]] * len(measurements)
     if names == None: names = [""] * len(measurements)
+    if len(names) == 1: names = [names[0]] * len(measurements)
     else: names = [name + " = " for name in names]
 
     output = ""
@@ -235,7 +245,7 @@ def get_value_errors_from_list(measurements:list[tuple[float]], units:list[str]=
         if significant_figures != None: error = roundScientific(error, significant_figures, False, force_scientific_notation)
         
         output += f"{names[i]}({value} ± {error}){units[i]}{separator}"
-    return output.strip() + ending
+    return output.removesuffix(separator).strip() + ending
 """
 def get_value_errors_from_list(measurements:list[tuple[float]], unit:str="", name:str="", separator:str=" ", ending:str=""):
     ""
