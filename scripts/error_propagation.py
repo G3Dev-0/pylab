@@ -14,4 +14,4 @@ def error_sum(devs:list[float], coefficients:list[float]=None):
         dev_sum (float) : the propagated sum error
     """
     if coefficients == None: coefficients = [1] * len(devs)
-    return math.sqrt(sum([(c ** 2) * (d ** 2) for c, d in zip(coefficients, devs)]))
+    return math.sqrt(sum([((c*d) ** 2) for c, d in zip(coefficients, devs)]))

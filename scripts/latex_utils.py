@@ -171,7 +171,7 @@ def measureList(measurements:list[tuple[float]], units:list[str]=None, names:lis
     
     return f"{latex.removesuffix(separator)}{ending}"
 
-def equation(expression, bold:bool=False, centered:bool=False, equationNumber:int=None) -> str: #, delimiterOn:bool=True):
+def equation(expression, bold:bool=False, centered:bool=False, equationNumber=None) -> str: #, delimiterOn:bool=True):
     """
     Params:
         expression (any) : the equation expression
@@ -185,7 +185,7 @@ def equation(expression, bold:bool=False, centered:bool=False, equationNumber:in
     if bold: expression = "\\boldsymbol{" + f"{expression}" + "}"
     delimiter = "$$" if centered else "$"
     #if not delimiterOn: delimiter = ""
-    equationNumberStr = f"\\tag{equationNumber}" if equationNumber != None else ""
+    equationNumberStr = "\\tag{" + str(equationNumber) + "}" if equationNumber != None else ""
     return f"{delimiter}{expression}{equationNumberStr}{delimiter}"
 
 def fraction(numerator, denominator) -> str:
@@ -203,11 +203,27 @@ def summation(indexName:str=None, start:int=None, end:str=None, expression:str=N
     """
     Returns the sum expression written in LaTeX
     """
-    i = indexName if indexName != None else "i"
-    s = f" = {start}" if start != None else " = 1"
-    e = end if end != None else "N"
-    
-    return "\\sum^" + f"{e}" + "_{" + f"{i}{s}" + "}{" + f"{expression}" + "}"
+    indexStr = indexName if indexName != None else "i"
+    startStr = f" = {start}" if start != None else ""
+    endStr = str(end) if end != None else ""
+    expressionStr = expression if expression != None else "x"
+
+    index = indexStr + startStr
+
+    return "\\sum^{" + endStr + "}_{" + index + "}{" + expressionStr + "_" + indexStr + "}"
+
+def productory(indexName:str=None, start:int=None, end:str=None, expression:str=None) -> str:
+    """
+    Returns the product expression written in LaTeX
+    """
+    indexStr = indexName if indexName != None else "i"
+    startStr = f" = {start}" if start != None else ""
+    endStr = str(end) if end != None else ""
+    expressionStr = expression if expression != None else "x"
+
+    index = indexStr + startStr
+
+    return "\\prod^{" + endStr + "}_{" + index + "}{" + expressionStr + "_" + indexStr + "}"
 
 def tableContent(lines:list[tuple], columns:int, titles:tuple=None, scale:float=None):
     """
@@ -290,7 +306,9 @@ def errorPropagationFormula() -> str:
     """
     Returns the error propagation formula written in LaTeX
     """
-    return "\\sigma_{f} = \\sqrt{\\sum^n_{i=1}{ \\left( \\frac{\\partial f}{\\partial x} \\sigma_{xi} \\right) ^2}}"
+    
+    return "\\sigma_{f} = \\sqrt{\\sum^N_{i = 0}{ \\left( \\frac{\\partial f}{\\partial x_i} \\sigma_{x_i} \\right) ^2}}"
+
 
 def varianceFormula(xName=None, N:int=None) -> str:
     """
@@ -299,9 +317,7 @@ def varianceFormula(xName=None, N:int=None) -> str:
     x = xName if xName != None else "x"
     Nstr = f"{N}" if N != None else "N"
     
-    num = summation(expression=f"({x}_i - {overline(x)}) ^ 2")
-    den = f"{Nstr} - 1"
-    return "\\sigma_{" + f"{x}" + "}" + f" = {fraction(num, den)}"
+    return "\\sigma^2_{" + x + "} = \\frac{\\sum^{" + Nstr + "}_{i = 0}{({" + x + "}_i - \\overline{" + x + "}) ^ 2}}{" + Nstr + " - 1}"
 
 def standardDeviationFormula(xName=None, N:int=None) -> str:
     """
@@ -310,10 +326,9 @@ def standardDeviationFormula(xName=None, N:int=None) -> str:
     x = xName if xName != None else "x"
     Nstr = f"{N}" if N != None else "N"
     
-    num = summation(expression=f"({x}_i - {overline(x)}) ^ 2")
-    den = f"{Nstr} - 1"
-    return "\\sigma_{" + f"{x}" + "}" + f" = {sqrt(fraction(num, den))}"
+    return "\\sigma_{" + x + "} = \\sqrt{\\frac{\\sum^{" + Nstr + "}_{i = 0}{({" + x + "}_i - \overline{" + x + "}) ^ 2}}{" + Nstr + " - 1}}"
 
+######################################################################################################
 def averageStandardDeviationFormula(xName=None, N:int=None) -> str:
     """
     Returns the average standard deviation formula written in LaTeX
@@ -321,6 +336,34 @@ def averageStandardDeviationFormula(xName=None, N:int=None) -> str:
     x = xName if xName != None else "x"
     Nstr = f"{N}" if N != None else "N"
     
+    return "\\sigma_{\\overline{" + x + "}} = \\frac{\\sigma_{" + x + "}}{\\sqrt{"+ Nstr + "}}"
+
+def averageFormula(xName=None, N:int=None) -> str:
+    """
+    Returns the average formula written in LaTeX
+    """
+    x = xName if xName != None else "x"
+    Nstr = f"{N}" if N != None else "N"
+
+    return "\\overline{" + x + "}=\\frac{1}{" + Nstr + "}\\sum^{" + Nstr + "}_{i=0}{" + x + "_i}"
+
+def weightedAverageFormula(xName=None, N:int=None) -> str:
+    """
+    Returns the weighted average formula written in LaTeX
+    """
+    x = xName if xName != None else "x"
+    Nstr = f"{N}" if N != None else "N"
+
+    return "\\overline{" + x + "}=\\frac{\\sum^{" + Nstr + "}_{i=0}{" + x + "_iw_i}}{\\sum^{" + Nstr + "}_{i=0}{w_i}} \\quad\\quad\\quad w_i=\\frac{1}{\\sigma^2_i}"
+
+def weightedAverageErrorFormula(xName=None, N:int=None) -> str:
+    """
+    Returns the weighted average error formula written in LaTeX
+    """
+    x = xName if xName != None else "x"
+    Nstr = f"{N}" if N != None else "N"
+    
     num = "\\sigma_{" + f"{x}" + "}"
     den = "\\sqrt{" + f"{Nstr}" + "}"
-    return "\\sigma_{" + f"{overline(x)}" + "}" + f" = {fraction(num, den)}"
+    
+    return "\\sigma_{\\overline{" + x + "}}=\\frac{1}{\\sqrt{\\sum^{" + Nstr + "}_{i=0}{w_i}}} \\quad\\quad\\quad w_i = \\frac{1}{\\sigma^2_i}"

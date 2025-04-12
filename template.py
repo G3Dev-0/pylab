@@ -5,7 +5,6 @@ import scripts.json_utils as json
 import scripts.linear_regression as lr
 import scripts.plot_utils as plot
 import scripts.stats_math as sm
-import scripts.latex_utils as lu
 import scripts.error_propagation as ep
 
 # your code goes here
