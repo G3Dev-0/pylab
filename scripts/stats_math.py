@@ -1,6 +1,6 @@
 import math
 
-def avg(data : list) -> float :
+def average(data : list) -> float :
     """
     Calculates the average of the data set
 
@@ -12,9 +12,9 @@ def avg(data : list) -> float :
     """
     return sum(data) / len(data)
 
-def var(data : list) -> float :
+def variance(data : list) -> float :
     """
-    Calculates the variance of the data set (divides by (N - 1))
+    Calculates the sample variance of the data set (divides by (N - 1))
 
     Params:
         data (list) : the data set
@@ -22,12 +22,12 @@ def var(data : list) -> float :
     Returns:
         variance (float) : the calculated variance
     """
-    avg_d = avg(data)
+    avg_d = average(data)
     return sum([(d - avg_d) ** 2 for d in data]) / (len(data) - 1)
 
-def dev(data : list) -> float :
+def standard_deviation(data : list) -> float :
     """
-    Calculates the standard deviation of the data set (divides by (N - 1))
+    Calculates the sample standard deviation of the data set (divides by (N - 1))
 
     Params:
         data (list) : the data set
@@ -35,9 +35,9 @@ def dev(data : list) -> float :
     Returns:
         standard deviation (float) : the calculated standard deviation
     """
-    return math.sqrt(var(data))
+    return math.sqrt(variance(data))
 
-def dev_avg(data : list) -> float :
+def average_standard_deviation(data : list) -> float :
     """
     Calculates the standard deviation for the average of the data set (divides by (N - 1) and then by √N)
 
@@ -47,26 +47,36 @@ def dev_avg(data : list) -> float :
     Returns:
         standard deviation (float) : the calculated standard deviation
     """
-    return dev(data) / math.sqrt(len(data))
+    return standard_deviation(data) / math.sqrt(len(data))
 
-def weighted_avg(data, weights) -> float:
+def weighted_average(data, weights) -> float:
+    """
+    Calculates the weighted average for the given data set using the specified weights
+    
+    Params:
+        data (list[tuple]) : the data set where every measure in given in tuples (value, standard_deviation)
+        weights (list) : the data set standard deviations
+
+    Returns:
+        weighted_average (float) : the calculated weighted average
+    """
     products = [w * d for d, w in zip(data, weights)]
     return sum(products) / sum(weights)
 
-def weighted_avg_with_dev(data : list[tuple]) -> tuple[float, float]:
+def weighted_average_with_standard_deviation(data : list[tuple]) -> tuple[float, float]:
     """
-    Calculates the weighted average of a dataset of measures with standard deviations
+    Calculates the weighted average of a dataset of measures using the measures standard deviations as weights
 
     Params:
         data (list[tuple]) : the data set where every measure in given in tuples (value, standard_deviation)
-        devs (list) : the data set standard deviations
         
     Returns:
         (a, d) where a = weighted average and d = weighted average standard deviation
     """
 
     weights = [1 / (d[1] ** 2) for d in data]
-    ratios = [d[0] / (d[1] ** 2) for d in data]
+    #ratios = [d[0] / (d[1] ** 2) for d in data]
+    ratios = [d[0] * w for d, w in zip(data, weights)]
 
     w_avg = sum(ratios) / sum(weights)
     w_avg_dev = (1 / sum(weights)) ** 0.5

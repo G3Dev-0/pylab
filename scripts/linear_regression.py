@@ -1,12 +1,18 @@
+from scripts import plot
+
 import math
 
-def linear_regression(points:list[tuple[float]], y_err:float=None):
+def linear_regression(points:list[tuple[float]], y_err:float=None, fast_plot:bool=False):
     """
-    Does linear regerssion on the given set of points
+    Does linear regression on the given set of points.\\
+    You can set fast_plot to True to plot the linear fit as well as scattering the points to do a first check.
+    The fast plot will be saved to "./img/fast_linear_regression.png"
+    
 
     Params:
         points (list[tuple[float]]) : the set of points
         dev_y (float) : the standard deviation for the y values
+        fast_plot (bool) : plots the linear fit if set to true (useful for a first check)
 
     Returns:
         q (float) : the calculated line intercept
@@ -45,5 +51,17 @@ def linear_regression(points:list[tuple[float]], y_err:float=None):
     # calcola le incertezze dell'intercetta e del coefficiente angolare
     dev_q = dev_y * math.sqrt((x ** 2) / delta)
     dev_m = dev_y * math.sqrt(N / delta)
+
+    if fast_plot:
+        xx, _ = plot.separate_coordinates(points)
+        min_x, max_x = min(xx), max(xx)
+        plot.line(m, q, min_x, max_x, 10, label="Linear Fit")
+        plot.scatter(points, y_err=dev_y, label="Points")
+        plot.set_title("Fast Linear Regression")
+        plot.enable_grid(True, True)
+        plot.enable_legend()
+        plot.set_axis("x", "y")
+        plot.save("fast_linear_regression", True)
+        plot.clear()
     
-    return q, m, dev_q, dev_m, y_err_post
+    return q, m, dev_q, dev_m, dev_y
