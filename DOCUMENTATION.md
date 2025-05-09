@@ -47,7 +47,7 @@ Here are some useful links to ofted used commands:
 
 **Consistency**
 - [𝛘²](#chi2)
-- [Measure Consistency in $\sigma$ (sigma)](#measure_consistency)
+- [Measure Consistency in 𝜎 (sigma)](#measure_consistency)
 
 <span id="calc"></span>
 
