@@ -581,4 +581,5 @@ To do list:
 
 # 12.0 About [#](#toc)
 Made by [**G3Dev**](https://github.com/G3Dev-0), 2025\
+Used Technologies: [**matplotlib**](https://matplotlib.org/)
 Version: [**v1.1 b08052025-0**](https://github.com/G3Dev-0/pylab)
