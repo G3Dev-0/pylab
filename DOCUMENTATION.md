@@ -46,7 +46,7 @@ Here are some useful links to ofted used commands:
 - [Gaussian](#gaussian)
 
 **Consistency**
-- [$\chi^2$](#chi2)
+- [𝛘²](#chi2)
 - [Measure Consistency in $\sigma$ (sigma)](#measure_consistency)
 
 <span id="calc"></span>
