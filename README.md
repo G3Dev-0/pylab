@@ -1,4 +1,4 @@
-# pylab
+# PyLab
 A python library that makes experimental calculations and paper writing easier.
 
 # How to Use It
