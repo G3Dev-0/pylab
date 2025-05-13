@@ -46,8 +46,8 @@ Here are some useful links to ofted used commands:
 - [Gaussian](#gaussian)
 
 **Consistency**
-- [𝛘²](#chi2)
-- [Measure Consistency in 𝜎 (sigma)](#measure_consistency)
+- [$\chi^2$](#chi2)
+- [Measure Consistency in $\sigma$ (sigma)](#measure_consistency)
 
 <span id="calc"></span>
 
@@ -162,6 +162,7 @@ Here are the functions to plot something to the graph.\
 
 All plotting functions have some specific parameters plus generic ones, namely:
 - **z_index**: an integer greater than or equal to 1 that tells matplotlib the layer on which the plot will be drawn.\
+Keep in mind that 0 is the grid level, so plotting with `z_index=0` will likely draw the grid over the plot.\
 *Note*: that you can also set it to 0, but the grid will be drawn on top of the plot.
 - **color**: the color of the plot. You can choose it among the ones in the [plot colors list](#plot_colors).
 - **alpha** (0-1 float): the alpha channel (transparency) of the plot color.
@@ -581,5 +582,4 @@ To do list:
 
 # 12.0 About [#](#toc)
 Made by [**G3Dev**](https://github.com/G3Dev-0), 2025\
-Used Technologies: [**matplotlib**](https://matplotlib.org/)\
-Version: [**v1.1 b08052025-0**](https://github.com/G3Dev-0/pylab)
+**Version:** [v1.1 b08052025-0](https://github.com/G3Dev-0/pylab)
