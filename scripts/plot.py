@@ -3,16 +3,49 @@ from scripts import io
 import matplotlib.pyplot as plt
 import numpy as np
 
-COLORS = ["#1F77B4", "red", "green", "blue", "yellow", "cyan", "magenta", "black", "grey"]
-DEFAULT_COLOR = 0
-RED_COLOR = 1
-GREEN_COLOR = 2
-BLUE_COLOR = 3
-YELLOW_COLOR = 4
-CYAN_COLOR = 5
-MAGENTA_COLOR = 6
-BLACK_COLOR = 7
-GREY_COLOR = 8
+# COLORS
+DEFAULT_COLOR = "#1F77B4"
+RED_COLOR = "red"
+GREEN_COLOR = "green"
+BLUE_COLOR = "blue"
+YELLOW_COLOR = "yellow"
+CYAN_COLOR = "cyan"
+MAGENTA_COLOR = "magenta"
+BLACK_COLOR = "black"
+GREY_COLOR = "grey"
+LIME_COLOR = "lime"
+ORANGE_COLOR = "orange"
+SALMON_COLOR = "salmon"
+CORNFLOWER_BLUE_COLOR = "cornflowerblue"
+
+# MARKERS
+INVISIBLE_MARKER = "none"
+POINT_MARKER_MARKER = "."
+CIRCLE_MARKER = "o"
+TRIANGLE_DOWN_MARKER = "v"
+TRIANGLE_UP_MARKER = "^"
+TRIANGLE_LEFT_MARKER = "<"
+TRIANGLE_RIGHT_MARKER = ">"
+OCTAGON_MARKER = "8"
+SQUARE_MARKER = "s"
+PENTAGON_MARKER = "p"
+PLUS_FILLED_MARKER = "P"
+STAR_MARKER = "*"
+HEXAGON_1_MARKER = "h"
+HEXAGON_2_MARKER = "H"
+PLUS_MARKER = "+"
+CROSS_MARKER = "x"
+CROSS_FILLED_MARKER = "X"
+DIAMOND_MARKER = "D"
+THIN_DIAMOND_MARKER = "d"
+HORIZONTAL_LINE_MARKER = "_"
+
+# LINE STYLES
+INVISIBLE_LINE = ""
+CONTINUOUS_LINE = "-"
+DASHED_LINE = "--"
+DOTTED_LINE = ":"
+DASH_DOT_LINE = "-."
 
 def separate_coordinates(points:list[tuple[float]]) -> tuple[list[float]]:
     """
@@ -105,57 +138,200 @@ def enable_grid(horizontal:bool=False, vertical:bool=False):
     elif vertical: axis = "y"
     plt.grid(visible=visible, axis=axis, zorder=0)
 
-def hist(data:list, bins:int, normalized:bool, z_index:int=1, color:int=DEFAULT_COLOR, alpha:float=1.0, label:str=None):
-    plt.hist(data, bins=bins, density=normalized, zorder=z_index, color=COLORS[color], alpha=alpha, label=label)
+def hist(
+        # plot data
+        data:list, bins:int, normalized:bool,
+        
+        # color
+        color:str=DEFAULT_COLOR,
+        
+        # others
+        z_index:int=2,
+        alpha:float=1.0,
+        label:str=None):
+    plt.hist(data, bins=bins, density=normalized, zorder=z_index, color=color, alpha=alpha, label=label)
 
-def scatter(points:list[tuple], y_err=None, hide_scatter:bool=False, z_index:int=1, color:int=DEFAULT_COLOR, alpha:float=1.0, label:str=None) -> plt :
+def scatter(
+        # plot data
+        points:list[tuple],
+        y_err=None,
+        
+        # styles
+        marker:str=CIRCLE_MARKER,
+        line_style:str=INVISIBLE_LINE,
+
+        # colors
+        color:str=DEFAULT_COLOR,
+        border_color:str=None,
+        errorbar_color:str=None,
+        line_color:str=GREY_COLOR,
+        
+        # others
+        z_index:int=2,
+        alpha:float=1.0,
+        label:str=None) -> plt :
     """
     Plots the given set of points.\\
-    You can also specify the width of the vertical error bars with y_err\\
+    You can also specify the height of the vertical error bars with y_err\\
     and the label shown in the legend.\\
     You can set the z index and the color.
 
     Params:
         points (list[tuple(float)]) : the set of points to be plotted
-        y_err (float) : the set of points to be plotted
-        hide_scatter (bool) : hides the points if set to True, shows them otherwise
+        y_err : the set of points to be plotted
+        
+        marker (str) : the marker of the plot (use the plot.MARKER_NAME constants) (plot.INVISIBLE_MARKER hides the points)
+        line_style (str) : the style of the linking line (use the plot.LINE_STYLE constants) (plot.INVISIBLE_LINE hides the line)
+        
+        color (str) : the color of the scattered points (use the plot.COLOR_NAME constants)
+        border_color (str) : the border color of the scattered points (use the plot.COLOR_NAME constants) (if set to "None" it will be equal to color)
+        errorbar_color (str) : the color of the points error bars (use the plot.COLOR_NAME constants) (if set to "None" it will be equal to color)
+        line_color (str) : the color of the line linking the points (use the plot.COLOR_NAME constants)
+        
         z_index (int) : the plot z index (0 (minimum) = grid lines) (higher z index means being drawn over plots with lower z index)
-        color (int) : the color of the plot (use the plot_utils.COLOR_NAME constants)
         alpha (float) : the color alpha channel (transparency)
         label (str) : the label that will be shown in the legend for this plot
     """
     x_val, y_val = [point[0] for point in points], [point[1] for point in points]
-    if y_err == None:
-        plt.scatter(x_val, y_val, zorder=z_index, color=COLORS[color], alpha=alpha, label=label)
-    else:
-        errors = y_err
-        if type(y_err) == float: errors = [y_err]*len(points)
-        style = "none" if hide_scatter else "o"
-        plt.errorbar(x_val, y_val, yerr=errors, fmt=style, capsize=6, zorder=z_index, alpha=alpha, color=COLORS[color], label=label)
+
+    if border_color == None: border_color = color
+    if errorbar_color == None: errorbar_color = color
+
+    plt.errorbar(x_val, y_val, yerr=y_err,          # x, y, y_error
+                fmt=f'{marker}{line_style}',        # marker and line style
+                color=line_color,                   # line color
+                ecolor=errorbar_color,              # error bars color
+                markerfacecolor=color,              # marker color
+                markeredgecolor=border_color,       # marker border color
+                capsize=6,                          # error bar width
+                zorder=z_index,
+                alpha=alpha,
+                label=label)
+    
     return plt
 
-def linked_points(points:list[tuple], y_err:float=None, z_index:int=1, color:int=DEFAULT_COLOR, alpha:float=1.0, label:str=None) -> plt :
+def errorbar_points(
+        # plot data
+        points:list[tuple],
+        y_err=None,
+        
+        # styles
+        marker:str=CIRCLE_MARKER,
+
+        # colors
+        color:str=DEFAULT_COLOR,
+        border_color:str=None,
+        errorbar_color:str=None,
+        
+        # others
+        z_index:int=2,
+        alpha:float=1.0,
+        label:str=None) -> plt :
     """
-    Plots a continuous line linking the given set of points.\\
-    You can also specify the width of the vertical error bars with y_err\\
+    Plots the given set of points with error bars and no linking line by default.\\
+    You can also specify the height of the vertical error bars with y_err\\
     and the label shown in the legend.\\
     You can set the z index and the color.
 
     Params:
         points (list[tuple(float)]) : the set of points to be plotted
-        y_err (float) : the set of points to be plotted
+        y_err : the set of points to be plotted
+        
+        marker (str) : the marker of the plot (use the plot.MARKER_NAME constants) (plot.INVISIBLE_MARKER hides the points)
+        
+        color (str) : the color of the scattered points (use the plot.COLOR_NAME constants)
+        border_color (str) : the border color of the scattered points (use the plot.COLOR_NAME constants) (if set to "None" it will be equal to color)
+        errorbar_color (str) : the color of the points error bars (use the plot.COLOR_NAME constants) (if set to "None" it will be equal to color)
+        
         z_index (int) : the plot z index (0 (minimum) = grid lines) (higher z index means being drawn over plots with lower z index)
-        color (int) : the color of the plot (use the plot_utils.COLOR_NAME constants)
         alpha (float) : the color alpha channel (transparency)
         label (str) : the label that will be shown in the legend for this plot
     """
-    x_val, y_val = [point[0] for point in points], [point[1] for point in points]
-    plt.plot(x_val, y_val, zorder=z_index, color=COLORS[color], alpha=alpha, label=label)
-    if y_err != None:
-        plt.errorbar(x_val, y_val, yerr=[y_err]*len(points), fmt="o", capsize=4, alpha=alpha)
-    return plt
+    return scatter(
+        points,
+        y_err,
+        
+        marker,
+        INVISIBLE_LINE,
+        
+        color,
+        border_color,
+        errorbar_color,
+        None,
+        
+        z_index,
+        alpha,
+        label)
 
-def line(slope:float, intercept:float, start:float, end:float, resolution:int, z_index:int=1, color:int=RED_COLOR, alpha:float=1.0, label:str=None):
+def linked_points(
+        # plot data
+        points:list[tuple],
+        
+        # styles
+        marker:str=CIRCLE_MARKER,
+        line_style:str=CONTINUOUS_LINE,
+
+        # colors
+        color:str=DEFAULT_COLOR,
+        border_color:str=None,
+        line_color:str=GREY_COLOR,
+        
+        # others
+        z_index:int=2,
+        alpha:float=1.0,
+        label:str=None) -> plt :
+    """
+    Plots the given set of points with a linking line connecting them and no error bars by default.\\
+    You can also set the label shown in the legend.\\
+    You can set the z index and the color.
+
+    Params:
+        points (list[tuple(float)]) : the set of points to be plotted
+        
+        marker (str) : the marker of the plot (use the plot.MARKER_NAME constants) (plot.INVISIBLE_MARKER hides the points)
+        line_style (str) : the style of the linking line (use the plot.LINE_STYLE constants) (plot.INVISIBLE_LINE hides the line)
+        
+        color (str) : the color of the scattered points (use the plot.COLOR_NAME constants)
+        border_color (str) : the border color of the scattered points (use the plot.COLOR_NAME constants) (if set to "None" it will be equal to color)
+        line_color (str) : the color of the line linking the points (use the plot.COLOR_NAME constants)
+        
+        z_index (int) : the plot z index (0 (minimum) = grid lines) (higher z index means being drawn over plots with lower z index)
+        alpha (float) : the color alpha channel (transparency)
+        label (str) : the label that will be shown in the legend for this plot
+    """
+    return scatter(
+        points,
+        None,
+        
+        marker,
+        line_style,
+        
+        color,
+        border_color,
+        None,
+        line_color,
+        
+        z_index,
+        alpha,
+        label)
+
+def line(
+        # plot data
+        slope:float,
+        intercept:float,
+
+        # function specific data
+        start:float,
+        end:float,
+        resolution:int,
+        
+        # color
+        color:str=RED_COLOR,
+        
+        # others
+        z_index:int=2,
+        alpha:float=1.0,
+        label:str=None):
     """
     Plots a line with a given slope, and intercept.\\
     You can specify from where to start, where to end and the amount of sample points (resolution) per unit.\\
@@ -169,18 +345,33 @@ def line(slope:float, intercept:float, start:float, end:float, resolution:int, z
         end (float) : the x position where the line ends
         resolution (int) : the amount of sample points per unit
         z_index (int) : the plot z index (0 (minimum) = grid lines) (higher z index means being drawn over plots with lower z index)
-        color (int) : the color of the plot (use the plot_utils.COLOR_NAME constants)
+        color (str) : the color of the plot (use the plot.COLOR_NAME constants)
         alpha (float) : the color alpha channel (transparency)
         label (str) : the label that will be shown in the legend for this plot
     """
     xs = np.linspace(start, end, int(resolution * (end - start)))
     ys = intercept + xs * slope
 
-    plt.plot(xs, ys, zorder=z_index, color=COLORS[color], alpha=alpha, label=label)
+    plt.plot(xs, ys, zorder=z_index, color=color, alpha=alpha, label=label)
 
     return plt
 
-def function(f, start:float, end:float, resolution:int, z_index:int=1, color:int=GREEN_COLOR, alpha:float=1.0, label:str=None):
+def function(
+        # plot data
+        f,
+        
+        # functions specific data
+        start:float,
+        end:float,
+        resolution:int,
+        
+        # color
+        color:str=GREEN_COLOR,
+
+        # others
+        z_index:int=2,
+        alpha:float=1.0,
+        label:str=None):
     """
     Plots a given function.\\
     You can specify from where to start, where to end and the amount of sample points (resolution) per unit.\\
@@ -193,18 +384,34 @@ def function(f, start:float, end:float, resolution:int, z_index:int=1, color:int
         end (float) : the x position where the line ends
         resolution (int) : the amount of sample points per unit
         z_index (int) : the plot z index (0 (minimum) = grid lines) (higher z index means being drawn over plots with lower z index)
-        color (int) : the color of the plot (use the plot_utils.COLOR_NAME constants)
+        color (str) : the color of the plot (use the plot.COLOR_NAME constants)
         alpha (float) : the color alpha channel (transparency)
         label (str) : the label that will be shown in the legend for this plot
     """
     xs = np.linspace(start, end, int(resolution * (end - start)))
     ys = f(xs)
 
-    plt.plot(xs, ys, zorder=z_index, color=COLORS[color], alpha=alpha, label=label)
+    plt.plot(xs, ys, zorder=z_index, color=color, alpha=alpha, label=label)
 
     return plt
 
-def gaussian(mean:float, sigma:float, start:float, end:float, resolution:int, z_index:int=1, color:int=MAGENTA_COLOR, alpha:float=1.0, label:str=None):
+def gaussian(
+        # plot data
+        mean:float,
+        sigma:float,
+        
+        # function specific data
+        start:float,
+        end:float,
+        resolution:int,
+        
+        # color
+        color:str=MAGENTA_COLOR,
+
+        # others
+        z_index:int=2,
+        alpha:float=1.0,
+        label:str=None):
     """
     Plots a gaussian with a given mean and standard deviation.\\
     You can specify from where to start, where to end and the amount of sample points (resolution) per unit.\\
@@ -218,7 +425,7 @@ def gaussian(mean:float, sigma:float, start:float, end:float, resolution:int, z_
         end (float) : the x position where the line ends
         resolution (int) : the amount of sample points per unit
         z_index (int) : the plot z index (0 (minimum) = grid lines) (higher z index means being drawn over plots with lower z index)
-        color (int) : the color of the plot (use the plot_utils.COLOR_NAME constants)
+        color (str) : the color of the plot (use the plot.COLOR_NAME constants)
         alpha (float) : the color alpha channel (transparency)
         label (str) : the label that will be shown in the legend for this plot
     """

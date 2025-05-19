@@ -33,6 +33,7 @@ def measure_consistency(m0:tuple[float, float], m1:tuple[float, float]):
     Returns:
         N (float) : the number of sigmas m0 and m1 are apart from eachother
     """
+    return abs(m0[0] - m1[0]) / math.sqrt((m0[1] ** 2) + (m1[1] ** 2))
 
 def chi_2(observed:list[float], expected:list[float]):
     """

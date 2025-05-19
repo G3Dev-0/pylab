@@ -260,3 +260,27 @@ def tab(text:str, tabs:int=1):
     """
     tt = ("\t" * tabs)
     return tt + text.replace("\n", "\n" + tt)
+
+def delta():
+    return "∆"
+
+def de():
+    return "∂"
+
+def pi():
+    return "π"
+
+def sigma():
+    return "σ"
+
+def mi():
+    return "µ"
+
+def nu():
+    return "𝝼"
+
+def square():
+    return "²"
+
+def cube():
+    return "³"

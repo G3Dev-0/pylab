@@ -1,4 +1,4 @@
-from scripts import console_utils as cu
+from scripts import console as cu
 
 def boldText(text) -> str:
     """
