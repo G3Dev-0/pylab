@@ -41,13 +41,14 @@ Here are some useful links to ofted used commands:
 **Plot**
 - [Histogram](#histogram)
 - [Scatter](#scatter)
+- [Errorbar Points](#errorbar_points)
 - [Linked Points](#linked_points)
 - [Line](#line)
 - [Gaussian](#gaussian)
 
 **Consistency**
-- [$\chi^2$](#chi2)
-- [Measure Consistency in $\sigma$ (sigma)](#measure_consistency)
+- [χ²](#chi2)
+- [Measure Consistency in σ (sigma)](#measure_consistency)
 
 <span id="calc"></span>
 
