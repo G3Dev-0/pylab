@@ -164,9 +164,11 @@ All plotting functions have some specific parameters plus generic ones, namely:
 - **z_index**: an integer greater than or equal to 1 that tells matplotlib the layer on which the plot will be drawn.\
 Keep in mind that 0 is the grid level, so plotting with `z_index=0` will likely draw the grid over the plot.\
 *Note*: that you can also set it to 0, but the grid will be drawn on top of the plot.
-- **color**: the color of the plot. You can choose it among the ones in the [plot colors list](#plot_colors).
 - **alpha** (0-1 float): the alpha channel (transparency) of the plot color.
-- **label** (string): the name of the plot (shown on the legend if enabled. See [plot.enable_lengend()](#enable_legend))
+- **label** (string): the name of the plot (shown on the legend if enabled. See [plot.enable_lengend()](#enable_legend)).
+- **color**: a color property. You can choose it among the ones in the [plot colors list](#plot_colors).
+- **marker**: the marker type. You can choose it among the ones in the [markers list](#plot_markers).
+- **line_style**: the line style. You can choose it among the ones in the [line styles list](#plot_line_styles).
 
 <span id="histogram"></span>
 
@@ -175,14 +177,81 @@ Plots an histogram with a given number of bins.
 
 <span id="scatter"></span>
 
-+ `scatter(points:list[tuple], y_err=None, hide_scatter:bool=False, z_index:int=1, color:int=DEFAULT_COLOR, alpha:float=1.0, label:str=None) -> plt`:\
+<!-- + `scatter(points:list[tuple], y_err=None, hide_scatter:bool=False, z_index:int=1, color:int=DEFAULT_COLOR, alpha:float=1.0, label:str=None) -> plt`:\ -->
++ **Scatter**
+```python
+def scatter(
+        # plot data
+        points:list[tuple],
+        y_err=None,
+        
+        # styles
+        marker:str=CIRCLE_MARKER,
+        line_style:str=INVISIBLE_LINE,
+
+        # colors
+        color:str=DEFAULT_COLOR,
+        border_color:str=None,
+        errorbar_color:str=None,
+        line_color:str=GREY_COLOR,
+        
+        # others
+        z_index:int=2,
+        alpha:float=1.0,
+        label:str=None
+) -> plt
+```
 Plots the given set of points.
-You can also specify the width of the vertical error bars with y_err or leave it set a `None` to hide them.\
-Setting `hide_scatter=True` makes only the error bars visible.
+You can also specify the width of the vertical error bars with y_err or leave it set a `None` to hide them.
+
+<span id="errorbar_points"></span>
+
++ **Errorbar Points**
+```python
+def errorbar_points(
+        # plot data
+        points:list[tuple],
+        y_err=None,
+        
+        # styles
+        marker:str=CIRCLE_MARKER,
+
+        # colors
+        color:str=DEFAULT_COLOR,
+        border_color:str=None,
+        errorbar_color:str=None,
+        
+        # others
+        z_index:int=2,
+        alpha:float=1.0,
+        label:str=None
+) -> plt :
+```
 
 <span id="linked_points"></span>
 
-+ `linked_points(points:list[tuple], y_err:float=None, z_index:int=1, color:int=DEFAULT_COLOR, alpha:float=1.0, label:str=None) -> plt`:\
+<!-- + `linked_points(points:list[tuple], y_err:float=None, z_index:int=1, color:int=DEFAULT_COLOR, alpha:float=1.0, label:str=None) -> plt`:\ -->
++ **Linked Points**
+```python
+def linked_points(
+        # plot data
+        points:list[tuple],
+        
+        # styles
+        marker:str=CIRCLE_MARKER,
+        line_style:str=CONTINUOUS_LINE,
+
+        # colors
+        color:str=DEFAULT_COLOR,
+        border_color:str=None,
+        line_color:str=GREY_COLOR,
+        
+        # others
+        z_index:int=2,
+        alpha:float=1.0,
+        label:str=None
+) -> plt :
+```
 Plots a continuous line linking the given set of points.\
 This DOES NOT plot the points.\
 You can also specify the width of the vertical error bars with y_err or leave it set a `None` to hide them.
@@ -241,9 +310,50 @@ These are the available plot colors:
 - MAGENTA_COLOR
 - BLACK_COLOR
 - GREY_COLOR
+- LIME_COLOR
+- ORANGE_COLOR
+- SALMON_COLOR
+- CORNFLOWER_BLUE_COLOR
 
 To use them you must refer to them in code as:
 `plot.COLOR_NAME`.
+
+<span id="plot_markers"></span>
+These are the available plot colors:
+- INVISIBLE_MARKER
+- POINT_MARKER_MARKER
+- CIRCLE_MARKER
+- TRIANGLE_DOWN_MARKER
+- TRIANGLE_UP_MARKER
+- TRIANGLE_LEFT_MARKER
+- TRIANGLE_RIGHT_MARKER
+- OCTAGON_MARKER
+- SQUARE_MARKER
+- PENTAGON_MARKER
+- PLUS_FILLED_MARKER
+- STAR_MARKER
+- HEXAGON_1_MARKER
+- HEXAGON_2_MARKER
+- PLUS_MARKER
+- CROSS_MARKER
+- CROSS_FILLED_MARKER
+- DIAMOND_MARKER
+- THIN_DIAMOND_MARKER
+- HORIZONTAL_LINE_MARKER
+
+To use them you must refer to them in code as:
+`plot.MARKER_NAME`.
+
+<span id="plot_line_styles"></span>
+These are the available plot colors:
+- INVISIBLE_LINE
+- CONTINUOUS_LINE
+- DASHED_LINE
+- DOTTED_LINE
+- DASH_DOT_LINE
+
+To use them you must refer to them in code as:
+`plot.LINE_STYLE_NAME`.
 
 + `separate_coordinates(points:list[tuple[float]]) -> tuple[list[float]]`:\
 Returns the coordinates of the points in separate arrays.\
@@ -582,4 +692,4 @@ To do list:
 
 # 12.0 About [#](#toc)
 Made by [**G3Dev**](https://github.com/G3Dev-0), 2025\
-**Version:** [v1.1 b08052025-0](https://github.com/G3Dev-0/pylab)
+**Version:** [v1.2 b19052025-0](https://github.com/G3Dev-0/pylab)
