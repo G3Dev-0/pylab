@@ -1,4 +1,4 @@
-from scripts import io
+import scripts.io as io
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -47,12 +47,13 @@ DASHED_LINE = "--"
 DOTTED_LINE = ":"
 DASH_DOT_LINE = "-."
 
-def separate_coordinates(points:list[tuple[float]]) -> tuple[list[float]]:
+def separate_coordinates(points:list[tuple[float]], coordinate_to_return:int=None) -> tuple[list[float]]:
     """
     Returns the coordinates of the points in separate arrays
 
     Params:
         points (list[tuple[float]]) : an array of N-dimensional points
+        coordinate_to_return (int) : the index of the coordinate to return (0 is the first, 1 is the second and so on) (if set to None all coordinates are returned)
     
     Returns:
         coordinates (tuple[list[float]]) : a tuple of N entries each one being an array of the coordinates of the points
@@ -68,7 +69,24 @@ def separate_coordinates(points:list[tuple[float]]) -> tuple[list[float]]:
         for j in range(n):
             coordinates:tuple[list[float]]
             coordinates[j].append(points[i][j])
-    return tuple(coordinates)
+    if coordinate_to_return == None: return tuple(coordinates)
+    else: return tuple(coordinates)[coordinate_to_return]
+
+def get_range(points:list[tuple[float]], coordinate_to_use:int):
+    """
+    Returns the range the array of points spans on considering the given coordinate_to_use.
+    e.g.: if coordinate_to_use is 0 (x) the method will return the minimum x and the maximum x
+    
+    Params:
+        points (list[tuple[float]]) : the list of points
+        coorinate_to_use (int) : the index of the coordinate to use (0 = x, 1 = y, 2 = z, 3 = w, ...)
+    Returs:
+        range (tuple[float, float]) : the range the points span on (min, max)
+    """
+    vals = separate_coordinates(points)[coordinate_to_use]
+    min_val = min(vals)
+    max_val = max(vals)
+    return (min_val, max_val)
 
 def show():
     """
@@ -79,7 +97,7 @@ def show():
 def save(file_name:str, replace_existing:bool=False):
     """
     Saves the graph to a "*.png" file with a specific name.\\
-    The file will be saved to "./img/file_name.png"
+    The file will be saved to "./img/{file_name}.png"
 
     Params:
         file_name (str) : the file name
@@ -154,6 +172,7 @@ def hist(
 def scatter(
         # plot data
         points:list[tuple],
+        x_err=None,
         y_err=None,
         
         # styles
@@ -178,7 +197,8 @@ def scatter(
 
     Params:
         points (list[tuple(float)]) : the set of points to be plotted
-        y_err : the set of points to be plotted
+        x_err : the x error bar value
+        y_err : the y error bar value
         
         marker (str) : the marker of the plot (use the plot.MARKER_NAME constants) (plot.INVISIBLE_MARKER hides the points)
         line_style (str) : the style of the linking line (use the plot.LINE_STYLE constants) (plot.INVISIBLE_LINE hides the line)
@@ -197,13 +217,13 @@ def scatter(
     if border_color == None: border_color = color
     if errorbar_color == None: errorbar_color = color
 
-    plt.errorbar(x_val, y_val, yerr=y_err,          # x, y, y_error
-                fmt=f'{marker}{line_style}',        # marker and line style
-                color=line_color,                   # line color
-                ecolor=errorbar_color,              # error bars color
-                markerfacecolor=color,              # marker color
-                markeredgecolor=border_color,       # marker border color
-                capsize=6,                          # error bar width
+    plt.errorbar(x_val, y_val, xerr=x_err,yerr=y_err,       # x, y, x_error, y_error
+                fmt=f'{marker}{line_style}',                # marker and line style
+                color=line_color,                           # line color
+                ecolor=errorbar_color,                      # error bars color
+                markerfacecolor=color,                      # marker color
+                markeredgecolor=border_color,               # marker border color
+                capsize=6,                                  # error bar width
                 zorder=z_index,
                 alpha=alpha,
                 label=label)
@@ -213,6 +233,7 @@ def scatter(
 def errorbar_points(
         # plot data
         points:list[tuple],
+        x_err=None,
         y_err=None,
         
         # styles
@@ -249,6 +270,7 @@ def errorbar_points(
     """
     return scatter(
         points,
+        x_err,
         y_err,
         
         marker,
@@ -301,6 +323,7 @@ def linked_points(
     """
     return scatter(
         points,
+        None,
         None,
         
         marker,

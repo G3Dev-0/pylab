@@ -22,6 +22,7 @@ This program should make the process of doing scientific calculations and writin
     - [7.1 Reading and Writing](#reading_and_writing)
     - [7.2 JSON - Python Type Conversion List](#json_python_conversion)
 - [8.0 Console](#console)
+- [8.1 Conversions](#conversions)
 - [9.0 LaTeX](#latex)
 - [10.0 Examples](#examples)
     - [10.1 Plot Examples](#plot_examples)
@@ -360,12 +361,24 @@ To use them you must refer to them in code as:
 Returns the coordinates of the points in separate arrays.\
 \
 For example:
-```
+```python
 points = [(0, 1, 2), (3, 4, 5), (6, 7, 8)]
 x, y, z = separate_coordinates(points)
 print(f"X: {x}") # [0, 3, 6]
 print(f"Y: {y}") # [1, 4, 7]
 print(f"Z: {z}") # [2, 5, 8]
+```
+
++ `get_range(points:list[tuple[float]]) -> tuple[list[float]]`:\
+Returns the range the array of points spans across considering the given coordinate to use.
+e.g.: if coordinate_to_use is 0 (x) the method will return the minimum x and the maximum x.\
+\
+For example:
+```python
+points = [(0, 1, 2), (3, 4, 5), (6, 7, 8)]
+m, M = get_range(points, 0)
+print(f"min X: {m}") # 0
+print(f"MAX X: {M}") # 6
 ```
 
 + `show()`:\
@@ -449,7 +462,9 @@ See [JSON - Python Type Conversion List](#json_python_conversion).
 <span id="console"></span>
 
 # 8.0 Console [#](#toc)
-This modure contains some print formatting functions and a scientific rounding function.
+This module contains some print formatting functions and a scientific rounding function.
+
+It also contains functions named after a character (like sigma(), mi(), square()) that return that specific character.
 
 + `roundScientific(number:float, significantFigures:int, putDotAfterFirstDigit:bool=False, forceScientificNotation:bool=False) -> str`:\
 Rounds a number to a specific amount of significant figures.\
@@ -481,8 +496,41 @@ Ends the string with `{ending}`.\
 \
 SUPPORTS DIFFERENT UNITS FOR EACH MEASURE
 
-+ `tab(text:str, tabs:int=1) -> str`:
++ `tab(text:str, tabs:int=1) -> str`:\
 Tabs a text, meaning it adds a customizable number of tabs at the beginning of every line in the given text.
+
+<span id="conversions"></span>
+
+# 8.1 Conversions [#](#toc)
+This module contains print utility conversion functions.
+
++ `convert_to_power(value:float, current_power:int, power:int)`:\
+Converts a value from its current power to the given power.\
+E.g.:
+```python
+print(conv.convert_to_power(1, conv.KILO, conv.MILLI)) # 1_000_000
+```
+
++ `convert_to_unit(value:float, current_power:int):`:\
+Converts a value from its power to the UNIT power.\
+E.g.:
+```python
+print(conv.convert_to_unit(1, conv.KILO)) # 1000
+print(conv.convert_to_unit(1, conv.MILLI)) # 0.001
+```
+
++ `value_with_unit(value:float, power:int, unitName:str):`:\
+Prints the given value followed by the symbol of the corresponding given power.\
+E.g.:
+```python
+# 1 kilometer
+print(conv.value_with_unit(1, conv.KILO, "m")) # 1 km
+# 200 grams
+print(conv.value_with_unit(200, conv.UNIT, "g")) # 200 g
+# it is also possible to write equivalences
+length = 1
+print(conv.value_with_unit(length, conv.MILLI, "m"), "=", conv.value_with_unit(conv.convert_to_unit(length, conv.MILLI), conv.UNIT, "m")) # 1 mm = 0.001 m
+```
 
 <span id="latex"></span>
 
@@ -582,6 +630,33 @@ $$\sigma_{\mu_{\text{xName}}}=\frac{1}{\sqrt{\sum^{N}_{i=0}{w_i}}} \quad\quad\qu
 # 10.0 Examples [#](#toc)
 In this section are some examples uses for this library.
 
+There will be a `"template.py"` file you can duplicate and use to as a base to make your own scripts.
+
+It has all the necessary imports and preparation code.
+
+Here is the full content of the template file:
+```python
+# imports go here
+import scripts.io as io
+import scripts.json as json
+import scripts.calculus as calculus
+import scripts.stats_math as sm
+import scripts.error_math as em
+import scripts.linear_regression as lr
+import scripts.plot as plot
+import scripts.console as console
+import scripts.latex as latex
+import scripts.conversion as conv
+
+# set home directory (the name of the folder that contains "scripts" and this file)
+io.set_home_dir("pylab")
+
+# your code goes here
+
+# always remember to call this to delete all the "__pycache__" folders that "import" creates
+io.close()
+```
+
 <span id="plot_examples"></span>
 
 ## 10.1 Plot Examples [#](#toc)
@@ -608,7 +683,7 @@ plot.enable_grid(horizontal=True, vertical=False)
 plot.show()
 ```
 The result:
-![alt text](/docs/images/parabola_plot.png)
+![alt text](./docs/images/parabola_plot.png)
 
 <span id="plot_examples_gaussian_distribution"></span>
 
@@ -630,7 +705,7 @@ plot.enable_legend()
 plot.save("gaussian")
 ```
 The result:
-![alt text](/docs/images/gaussian_plot.png)
+![alt text](./docs/images/gaussian_plot.png)
 
 <span id="linear_regression_example"></span>
 
@@ -675,10 +750,10 @@ plot.save("linear_fit")
 ```
 The results:
 #### Linear Regression: Fast Plot
-![alt text](/docs/images/fast_linear_regression.png)
+![alt text](./docs/images/fast_linear_regression.png)
 
 #### Linear Regression: Customized Plot
-![alt text](/docs/images/linear_fit.png)
+![alt text](./docs/images/linear_fit.png)
 
 <span id="todo"></span>
 
@@ -693,4 +768,4 @@ To do list:
 
 # 12.0 About [#](#toc)
 Made by [**G3Dev**](https://github.com/G3Dev-0), 2025\
-**Version:** [v1.2 b19052025-0](https://github.com/G3Dev-0/pylab)
+**Version:** [v1.3 b15072025-0](https://github.com/G3Dev-0/pylab)

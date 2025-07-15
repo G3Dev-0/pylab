@@ -45,7 +45,7 @@ def linear_regression(points:list[tuple[float]], y_err:float=None, fast_plot:boo
     # calcola incertezza di y a posteriori
     y_err_post = math.sqrt(sum([(q + (m*x) - y)**2 for x, y in zip(x_values, y_values)]) / (N - 2))
 
-    # usala per calcolare dev_m e dev_q
+    # usa l'incertezza di y a posteriori per calcolare dev_m e dev_q
     if dev_y == None: dev_y = y_err_post
 
     # calcola le incertezze dell'intercetta e del coefficiente angolare

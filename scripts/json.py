@@ -1,4 +1,4 @@
-from scripts import io
+import scripts.io as io
 
 import json
 
@@ -12,7 +12,42 @@ def load(path:str) -> dict:
     Returns:
         json (dict) : the parsed json values
     """
-    jsonContent = "\n".join(io.read(path))
+    loaded_lines = io.read(path)
+
+    lines = []
+    # parse lines by removing comments
+    is_in_comment_block = False
+    COMMENT_LINE = "//"
+    COMMENT_BLOCK_START = "/*"
+    COMMENT_BLOCK_END = "*/"
+    for line in loaded_lines:
+        line = line.strip()
+        # comment line not at the beginning
+        if COMMENT_LINE in line and line.strip().index(COMMENT_LINE) > 0:
+            line = line[:line.index(COMMENT_LINE)]
+
+        # one-line comment block
+        if COMMENT_BLOCK_START in line and COMMENT_BLOCK_END in line:
+            block_start = line.index(COMMENT_BLOCK_START)
+            block_end = line.index(COMMENT_BLOCK_END) + 2
+            if block_start > block_end: continue
+            line = line[:block_start] + line[block_end:]
+
+        # end comment block
+        if COMMENT_BLOCK_END in line and is_in_comment_block:
+            line = line[line.index(COMMENT_BLOCK_END) + 2:]
+            is_in_comment_block = False
+        
+        # comment line
+        if is_in_comment_block or line.startswith(COMMENT_LINE): continue
+        
+        # start comment block
+        if COMMENT_BLOCK_START in line and not is_in_comment_block:
+            line = line[:line.index(COMMENT_BLOCK_START)]
+            is_in_comment_block = True
+        
+        lines.append(line)
+    jsonContent = "".join(lines)
     return json.loads(jsonContent)
 
 def write(file_name:str, content:dict, replace_existing:bool=False):

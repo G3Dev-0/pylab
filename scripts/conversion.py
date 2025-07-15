@@ -33,7 +33,7 @@ prefixes = {
 
 def convert_to_power(value:float, current_power:int, power:int):
     """
-    Converts a value from its power to the GIVEN power
+    Converts a value from its current power to the given power
 
     Params:
         value (float) : the value to convert

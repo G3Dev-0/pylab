@@ -273,6 +273,9 @@ def pi():
 def sigma():
     return "σ"
 
+def theta():
+    return "ϑ"
+
 def mi():
     return "µ"
 

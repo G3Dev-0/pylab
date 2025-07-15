@@ -332,7 +332,7 @@ def standardDeviationFormula(xName=None, N:int=None) -> str:
     x = xName if xName != None else "x"
     Nstr = f"{N}" if N != None else "N"
     
-    return "\\sigma_{" + x + "} = \\sqrt{\\frac{\\sum^{" + Nstr + "}_{i = 0}{({" + x + "}_i - \overline{" + x + "}) ^ 2}}{" + Nstr + " - 1}}"
+    return "\\sigma_{" + x + "} = \\sqrt{\\frac{\\sum^{" + Nstr + "}_{i = 0}{({" + x + "}_i - \\overline{" + x + "}) ^ 2}}{" + Nstr + " - 1}}"
 
 ######################################################################################################
 def averageStandardDeviationFormula(xName=None, N:int=None) -> str:

@@ -2,9 +2,44 @@ import shutil
 
 import os.path
 
-IMG_PATH = "./img"
-TXT_PATH = "./txt"
-JSON_PATH = "./json"
+# call this before running any other commands
+def set_home_dir(home_dir:str, verbose:bool=True):
+    global HOME_DIR, IMG_PATH, TXT_PATH, JSON_PATH
+    HOME_DIR = f"{os.getcwd()}/{home_dir}"
+    IMG_PATH = f"{HOME_DIR}/img"
+    TXT_PATH = f"{HOME_DIR}/txt"
+    JSON_PATH = f"{HOME_DIR}/json"
+    if (verbose):
+        print("Starting PYLAB on:")
+        print(f"- home dir: {HOME_DIR}")
+        print(f"- image dir: {IMG_PATH}")
+        print(f"- text dir: {TXT_PATH}")
+        print(f"- json dir: {JSON_PATH}")
+
+def get_home_dir():
+    return HOME_DIR
+
+def path(*paths:str):
+    """
+    Builds a path by joining together the given set of paths.
+    Joins with " / ", BACKSLASHES are NOT allowed.
+    Params:
+        paths (str) : a tuple of paths to join together
+    Returns:
+        path (str) : the joined paths
+    """
+    paths = list(paths)
+    endsWithSlash = paths[-1][-1] == "/"
+    result = ""
+    for i in range(len(paths)):
+        p = paths[i]
+        if "\\" in p:
+            print("[Error]: Paths cannot contain \"\\\", only \"/\"")
+            return None
+        paths[i] = p.strip("/")
+    
+    return "/" + "/".join(paths) + ("/" if endsWithSlash else "")
+
 
 def check_for_dir_file_to_save(path:str, check_dir:str, replace_existing:bool=False) -> bool :
     """
@@ -31,8 +66,9 @@ def close(sayGoodbye:bool=True):
     Deletes the __pycache__ folder.\\
     Call this when closing the program.
     """
-    shutil.rmtree("./scripts/__pycache__")
+    shutil.rmtree(f"{HOME_DIR}/scripts/__pycache__")
     if sayGoodbye: print("Done!")
+    exit(0)
 
 def read(path : str) -> list[str] :
     """
@@ -45,7 +81,7 @@ def read(path : str) -> list[str] :
         lines (list[str]) : the lines read from the file
     """
     lines = []
-    with open(path, "r") as f:
+    with open(f"/{HOME_DIR}/" + path, "r") as f:
         lines = f.readlines()
     return lines
 
