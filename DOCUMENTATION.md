@@ -730,12 +730,8 @@ q, m, dev_q, dev_m, dev_y = lr.linear_regression(volume_pressure, fast_plot=True
 # CUSTOM PLOT
 # plot the calculated data on a well refined graph
 
-# get the x coordinates of the points (volume values)
-x_values, _ = plot.separate_coordinates(volume_pressure)
-# find the minimum volume value
-min_x = min(x_values)
-# find the maximum volume value
-max_x = max(x_values)
+# get the x coordinates range
+min_x, max_x = plot.get_range(volume_pressure, 0)
 # plot the calculated line
 plot.line(m, q, min_x, max_x, 10, color=plot.GREEN_COLOR, label="Linear Fit")
 # scatter the points with the calculated error bars
