@@ -1,7 +1,12 @@
 import scripts.io as io
+import scripts.distributions as distributions
 
 import matplotlib.pyplot as plt
 import numpy as np
+
+from matplotlib.ticker import FixedLocator, MaxNLocator
+
+from random import randint as rand
 
 # COLORS
 DEFAULT_COLOR = "#1F77B4"
@@ -12,15 +17,35 @@ YELLOW_COLOR = "yellow"
 CYAN_COLOR = "cyan"
 MAGENTA_COLOR = "magenta"
 BLACK_COLOR = "black"
+BROWN_COLOR = "brown"
 GREY_COLOR = "grey"
 LIME_COLOR = "lime"
 ORANGE_COLOR = "orange"
 SALMON_COLOR = "salmon"
 CORNFLOWER_BLUE_COLOR = "cornflowerblue"
 
+COLORS = [
+    DEFAULT_COLOR ,
+    RED_COLOR,
+    GREEN_COLOR,
+    BLUE_COLOR,
+    YELLOW_COLOR,
+    CYAN_COLOR,
+    MAGENTA_COLOR,
+    BLACK_COLOR,
+    BROWN_COLOR,
+    GREY_COLOR,
+    LIME_COLOR,
+    ORANGE_COLOR,
+    SALMON_COLOR,
+    CORNFLOWER_BLUE_COLOR
+]
+def get_random_color():
+    return COLORS[rand(0, len(COLORS) - 1)]
+
 # MARKERS
 INVISIBLE_MARKER = "none"
-POINT_MARKER_MARKER = "."
+POINT_MARKER = "."
 CIRCLE_MARKER = "o"
 TRIANGLE_DOWN_MARKER = "v"
 TRIANGLE_UP_MARKER = "^"
@@ -40,12 +65,47 @@ DIAMOND_MARKER = "D"
 THIN_DIAMOND_MARKER = "d"
 HORIZONTAL_LINE_MARKER = "_"
 
+MARKERS = [
+    INVISIBLE_MARKER,
+    POINT_MARKER,
+    CIRCLE_MARKER,
+    TRIANGLE_DOWN_MARKER,
+    TRIANGLE_UP_MARKER,
+    TRIANGLE_LEFT_MARKER,
+    TRIANGLE_RIGHT_MARKER,
+    OCTAGON_MARKER,
+    SQUARE_MARKER,
+    PENTAGON_MARKER,
+    PLUS_FILLED_MARKER,
+    STAR_MARKER,
+    HEXAGON_1_MARKER,
+    HEXAGON_2_MARKER,
+    PLUS_MARKER,
+    CROSS_MARKER,
+    CROSS_FILLED_MARKER,
+    DIAMOND_MARKER,
+    THIN_DIAMOND_MARKER,
+    HORIZONTAL_LINE_MARKER
+]
+def get_random_marker(include_invisible_marker:bool=False):
+    return MARKERS[rand(0 if include_invisible_marker else 1, len(MARKERS) - 1)]
+
 # LINE STYLES
 INVISIBLE_LINE = ""
 CONTINUOUS_LINE = "-"
 DASHED_LINE = "--"
 DOTTED_LINE = ":"
 DASH_DOT_LINE = "-."
+
+LINE_STYLES = [
+    INVISIBLE_LINE,
+    CONTINUOUS_LINE,
+    DASHED_LINE,
+    DOTTED_LINE,
+    DASH_DOT_LINE
+]
+def get_random_line_style(include_invisible_line_style:bool=False):
+    return LINE_STYLES[rand(0 if include_invisible_line_style else 1, len(LINE_STYLES) - 1)]
 
 def separate_coordinates(points:list[tuple[float]], coordinate_to_return:int=None) -> tuple[list[float]]:
     """
@@ -105,7 +165,7 @@ def save(file_name:str, replace_existing:bool=False):
     """
     path = f"{io.IMG_PATH}/{file_name}.png"
     if io.check_for_dir_file_to_save(path, io.IMG_PATH, replace_existing):
-        plt.savefig(path)
+        plt.savefig(path, bbox_inches='tight')
 
     """if not os.path.exists(IMG_PATH): os.mkdir(IMG_PATH)
     if os.path.exists(path) and not replace_existing:
@@ -128,7 +188,7 @@ def set_title(title):
     """
     plt.title(title)
 
-def set_axis(x_name, y_name):
+def set_axes(x_name, y_name):
     """
     Sets the axis names to two given strings
 
@@ -139,27 +199,30 @@ def set_axis(x_name, y_name):
     plt.xlabel(x_name)
     plt.ylabel(y_name)
 
-def enable_legend():
+def enable_legend(title:str="Legenda"):
     """
     Shows the legend in the graph
     """
-    plt.legend(title="Legenda")
+    plt.legend(title=title)
 
-def enable_grid(horizontal:bool=False, vertical:bool=False):
+def enable_grid(horizontal:bool=True, vertical:bool=True):
     """
     Shows the horizontal and/or verical grid if enabled
     """
     visible = horizontal or vertical
     axis = ""
     if horizontal and vertical: axis = "both"
-    elif horizontal: axis = "x"
-    elif vertical: axis = "y"
+    elif horizontal: axis = "y"
+    elif vertical: axis = "x"
     plt.grid(visible=visible, axis=axis, zorder=0)
 
 def hist(
         # plot data
-        data:list, bins:int, normalized:bool,
+        data:list, bins:int | None, normalized:bool,
         
+        # hist plot settings
+        show_integers:bool=False,
+
         # color
         color:str=DEFAULT_COLOR,
         
@@ -167,6 +230,33 @@ def hist(
         z_index:int=2,
         alpha:float=1.0,
         label:str=None):
+    """
+    Plots a histogram of the given data. You can leave set bins to None to have them automatically calculated.
+
+    Args:
+        data (list) : the data to create the histogram about
+        bins (int | None) : the number of bins (set it to None to have them automatically calculated)
+        normalized (bool) : normalizes the data frequencies if set to True, leaves them untouched othewise
+        
+        show_integers (bool=False) : if set to True shows only integer values on the x axis
+
+        color (str) : the color of the scattered points (use the plot.COLOR_NAME constants)
+
+        z_index (int) : the plot z index (0 (minimum) = grid lines) (higher z index means being drawn over plots with lower z index)
+        alpha (float) : the color alpha channel (transparency)
+        label (str) : the label that will be shown in the legend for this plot
+    """
+    if bins == None: bins = np.arange(min(data) - 0.5, max(data) + 1.5, 1)
+    
+    if show_integers:
+        min_val = int(min(data))
+        max_val = int(max(data))
+        all_integer_ticks = np.arange(min_val, max_val + 1)
+
+        # Imposta i tick dell'asse x esattamente sui numeri interi desiderati
+        plt.gca().xaxis.set_major_locator(FixedLocator(all_integer_ticks))
+        #plt.gca().xaxis.set_major_locator(MaxNLocator(integer=True))
+    
     plt.hist(data, bins=bins, density=normalized, zorder=z_index, color=color, alpha=alpha, label=label)
 
 def scatter(
@@ -207,7 +297,7 @@ def scatter(
         border_color (str) : the border color of the scattered points (use the plot.COLOR_NAME constants) (if set to "None" it will be equal to color)
         errorbar_color (str) : the color of the points error bars (use the plot.COLOR_NAME constants) (if set to "None" it will be equal to color)
         line_color (str) : the color of the line linking the points (use the plot.COLOR_NAME constants)
-        
+
         z_index (int) : the plot z index (0 (minimum) = grid lines) (higher z index means being drawn over plots with lower z index)
         alpha (float) : the color alpha channel (transparency)
         label (str) : the label that will be shown in the legend for this plot
@@ -347,6 +437,9 @@ def line(
         start:float,
         end:float,
         resolution:int,
+
+        # line style
+        line_style:str=CONTINUOUS_LINE,
         
         # color
         color:str=RED_COLOR,
@@ -354,7 +447,7 @@ def line(
         # others
         z_index:int=2,
         alpha:float=1.0,
-        label:str=None):
+        label:str=None) -> plt :
     """
     Plots a line with a given slope, and intercept.\\
     You can specify from where to start, where to end and the amount of sample points (resolution) per unit.\\
@@ -364,29 +457,48 @@ def line(
     Params:
         slope (float) : the line slope
         intercept (float) : the line intercept
+        
         start (float) : the x position where the line begins
         end (float) : the x position where the line ends
         resolution (int) : the amount of sample points per unit
-        z_index (int) : the plot z index (0 (minimum) = grid lines) (higher z index means being drawn over plots with lower z index)
+        
+        line_style (str) : the style of the line (use the plot.LINE_STYLE constants) (plot.INVISIBLE_LINE hides the line)
+
         color (str) : the color of the plot (use the plot.COLOR_NAME constants)
+        
+        z_index (int) : the plot z index (0 (minimum) = grid lines) (higher z index means being drawn over plots with lower z index)
         alpha (float) : the color alpha channel (transparency)
         label (str) : the label that will be shown in the legend for this plot
     """
     xs = np.linspace(start, end, int(resolution * (end - start)))
     ys = intercept + xs * slope
 
-    plt.plot(xs, ys, zorder=z_index, color=color, alpha=alpha, label=label)
+    plt.plot(
+        xs, ys,
+
+        linestyle=line_style,
+        
+        color=color,
+        
+        zorder=z_index,
+        alpha=alpha,
+        label=label
+    )
 
     return plt
 
 def function(
         # plot data
         f,
+        function_parameters:list[float] | None,
         
         # functions specific data
         start:float,
         end:float,
         resolution:int,
+
+        # line style
+        line_style:str=CONTINUOUS_LINE,
         
         # color
         color:str=GREEN_COLOR,
@@ -394,7 +506,7 @@ def function(
         # others
         z_index:int=2,
         alpha:float=1.0,
-        label:str=None):
+        label:str=None) -> plt :
     """
     Plots a given function.\\
     You can specify from where to start, where to end and the amount of sample points (resolution) per unit.\\
@@ -402,19 +514,37 @@ def function(
     You can set the z index and the color.
 
     Params:
-        f (function) : the function to plot. IT MUST TAKE A SINGLE FLOAT PARAMETER AND A RETURN A SINGLE FLOAT
+        f (function) : the function to plot. IT MUST TAKE A SINGLE FLOAT AS INDIPENDENT VARIABLE AND A RETURN A SINGLE FLOAT.\
+            ALL THE OTHER COEFFICIENTS CAN BE PASSED THROUGH A LIST (see function_parameters)
+        function_parameters (list[float] | None) : a list containing additional function parameters (this can be None if the function does not take other parameters apart from the indipendent variable)
+        
         start (float) : the x position where the line begins
         end (float) : the x position where the line ends
         resolution (int) : the amount of sample points per unit
-        z_index (int) : the plot z index (0 (minimum) = grid lines) (higher z index means being drawn over plots with lower z index)
+        
+        line_style (str) : the style of the line (use the plot.LINE_STYLE constants) (plot.INVISIBLE_LINE hides the line)
+
         color (str) : the color of the plot (use the plot.COLOR_NAME constants)
+        
+        z_index (int) : the plot z index (0 (minimum) = grid lines) (higher z index means being drawn over plots with lower z index)
         alpha (float) : the color alpha channel (transparency)
         label (str) : the label that will be shown in the legend for this plot
     """
     xs = np.linspace(start, end, int(resolution * (end - start)))
-    ys = f(xs)
+    if function_parameters != None: ys = f(xs, function_parameters)
+    else: ys = f(xs)
 
-    plt.plot(xs, ys, zorder=z_index, color=color, alpha=alpha, label=label)
+    plt.plot(
+        xs, ys,
+        
+        linestyle=line_style,
+        
+        color=color,
+        
+        zorder=z_index,
+        alpha=alpha,
+        label=label
+    )
 
     return plt
 
@@ -427,6 +557,9 @@ def gaussian(
         start:float,
         end:float,
         resolution:int,
+
+        # line style
+        line_style:str=CONTINUOUS_LINE,
         
         # color
         color:str=MAGENTA_COLOR,
@@ -434,7 +567,7 @@ def gaussian(
         # others
         z_index:int=2,
         alpha:float=1.0,
-        label:str=None):
+        label:str=None) -> plt :
     """
     Plots a gaussian with a given mean and standard deviation.\\
     You can specify from where to start, where to end and the amount of sample points (resolution) per unit.\\
@@ -444,14 +577,60 @@ def gaussian(
     Params:
         mean (float) : the mean where the gaussian will be centered
         sigma (float) : the standard deviation that will define the gaussian
+        
         start (float) : the x position where the line begins
         end (float) : the x position where the line ends
         resolution (int) : the amount of sample points per unit
-        z_index (int) : the plot z index (0 (minimum) = grid lines) (higher z index means being drawn over plots with lower z index)
+        
+        line_style (str) : the style of the line (use the plot.LINE_STYLE constants) (plot.INVISIBLE_LINE hides the line)
+
         color (str) : the color of the plot (use the plot.COLOR_NAME constants)
+        
+        z_index (int) : the plot z index (0 (minimum) = grid lines) (higher z index means being drawn over plots with lower z index)
         alpha (float) : the color alpha channel (transparency)
         label (str) : the label that will be shown in the legend for this plot
     """
-    def norm(x):
-        return np.exp(-0.5 * (((x - mean) / (sigma)) ** 2)) / (sigma * np.sqrt(2 * np.pi))
-    return function(norm, start, end, resolution, z_index, color, alpha, label)
+    return function(distributions.gaussian, [mean, sigma], start, end, resolution, line_style, color, z_index, alpha, label)
+
+def poissoninan(
+        # plot data
+        k:float,
+        
+        # function specific data
+        start:float,
+        end:float,
+        resolution:int,
+
+        # line style
+        line_style:str=CONTINUOUS_LINE,
+        
+        # color
+        color:str=MAGENTA_COLOR,
+
+        # others
+        z_index:int=2,
+        alpha:float=1.0,
+        label:str=None) -> plt :
+    """
+    Plots a poissoninan with a given constant k.\\
+    You can specify from where to start, where to end and the amount of sample points (resolution) per unit.\\
+    You can also give a label that will be displayed in the legend for this plot.\\
+    You can set the z index and the color.
+
+    Params:
+        mean (float) : the mean where the gaussian will be centered
+        sigma (float) : the standard deviation that will define the gaussian
+
+        start (float) : the x position where the line begins
+        end (float) : the x position where the line ends
+        resolution (int) : the amount of sample points per unit
+        
+        line_style (str) : the style of the line (use the plot.LINE_STYLE constants) (plot.INVISIBLE_LINE hides the line)
+
+        color (str) : the color of the plot (use the plot.COLOR_NAME constants)
+        
+        z_index (int) : the plot z index (0 (minimum) = grid lines) (higher z index means being drawn over plots with lower z index)
+        alpha (float) : the color alpha channel (transparency)
+        label (str) : the label that will be shown in the legend for this plot
+    """
+    return function(distributions.poissonian, [k], start, end, resolution, line_style, color, z_index, alpha, label)
