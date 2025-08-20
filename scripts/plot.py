@@ -1,6 +1,8 @@
 import scripts.io as io
 import scripts.distributions as distributions
 
+import matplotlib
+matplotlib.use('TkAgg')
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -218,13 +220,16 @@ def enable_grid(horizontal:bool=True, vertical:bool=True):
 
 def hist(
         # plot data
-        data:list, bins:int | None, normalized:bool,
+        data:list,
+        bins:int | None,
+        normalized:bool,
         
         # hist plot settings
         show_integers:bool=False,
 
         # color
         color:str=DEFAULT_COLOR,
+        edge_color:str | None=None,
         
         # others
         z_index:int=2,
@@ -240,7 +245,8 @@ def hist(
         
         show_integers (bool=False) : if set to True shows only integer values on the x axis
 
-        color (str) : the color of the scattered points (use the plot.COLOR_NAME constants)
+        color (str) : the color of the bins inside (use the plot.COLOR_NAME constants)
+        edge_color (str) : the color of the bins edge (use the plot.COLOR_NAME constants)
 
         z_index (int) : the plot z index (0 (minimum) = grid lines) (higher z index means being drawn over plots with lower z index)
         alpha (float) : the color alpha channel (transparency)
@@ -257,7 +263,7 @@ def hist(
         plt.gca().xaxis.set_major_locator(FixedLocator(all_integer_ticks))
         #plt.gca().xaxis.set_major_locator(MaxNLocator(integer=True))
     
-    plt.hist(data, bins=bins, density=normalized, zorder=z_index, color=color, alpha=alpha, label=label)
+    plt.hist(data, bins=bins, density=normalized, zorder=z_index, color=color, edgecolor=edge_color, alpha=alpha, label=label)
 
 def scatter(
         # plot data

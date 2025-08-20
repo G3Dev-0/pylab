@@ -87,15 +87,15 @@ def read(path : str) -> list[str] :
 
 def write(file_name:str, content:str, replace_existing:bool=False):
     """
-    Writes the content to a "*.txt" file with a specific name.
-    The file will be saved to "./txt/{file_name}.txt"
+    Writes the content to a file with a specific name.
+    The file will be saved to "./txt/{file_name}"
 
     Params:
         file_name (str) : the file name
         content (str) : the content to be written to the file
         replace_existng (bool) : if set to True it automatically replaces an already existing file (if there is any), otherwise it asks the user to confirm before proceding
     """
-    path = f"{TXT_PATH}/{file_name}.txt"
+    path = f"{TXT_PATH}/{file_name}"
     if not check_for_dir_file_to_save(path, TXT_PATH, replace_existing):
         return
     with open(path, "w") as f:
