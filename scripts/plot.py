@@ -236,7 +236,7 @@ def hist(
         alpha:float=1.0,
         label:str=None):
     """
-    Plots a histogram of the given data. You can leave set bins to None to have them automatically calculated.
+    Plots a histogram of the given data. You can set bins to None to have them automatically calculated.
 
     Args:
         data (list) : the data to create the histogram about
