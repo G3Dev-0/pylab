@@ -735,7 +735,6 @@ plot.enable_grid(horizontal=True, vertical=False)
 # shows the plot in a matplotlib window
 plot.show()
 ```
-The result:
 ![alt text](./docs/images/parabola_plot.png)
 
 #### Parametric function
@@ -762,7 +761,6 @@ plot.enable_grid()
 plot.enable_legend()
 plot.show()
 ```
-The result:
 ![alt text](./docs/images/polynomial_plot.png)
 
 <span id="plot_examples_gaussian_distribution"></span>
@@ -784,7 +782,6 @@ plot.enable_legend()
 # saves the plot to "./img/gaussian.png"
 plot.save("gaussian")
 ```
-The result:
 ![alt text](./docs/images/gaussian_plot.png)
 
 <span id="linear_regression_example"></span>
