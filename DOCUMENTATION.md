@@ -174,12 +174,31 @@ Keep in mind that 0 is the grid level, so plotting with `z_index=0` will likely 
 
 <span id="histogram"></span>
 
-+ `hist(data:list, bins:int, normalized:bool, z_index:int=1, color:int=DEFAULT_COLOR, alpha:float=1.0, label:str=None)`:\
-Plots an histogram with a given number of bins.
++ **Histogram**
+```python
+def hist(
+        # plot data
+        data:list,
+        bins:int | None,
+        normalized:bool,
+        
+        # hist plot settings
+        show_integers:bool=False,
+
+        # color
+        color:str=DEFAULT_COLOR,
+        edge_color:str | None=None,
+        
+        # others
+        z_index:int=2,
+        alpha:float=1.0,
+        label:str=None):
+```
+Plots a histogram of the given data. You can set bins to `None` to have them automatically calculated.
+If `show_integers` is set to `True` shows only integer values on the x axis.
 
 <span id="scatter"></span>
 
-<!-- + `scatter(points:list[tuple], y_err=None, hide_scatter:bool=False, z_index:int=1, color:int=DEFAULT_COLOR, alpha:float=1.0, label:str=None) -> plt`:\ -->
 + **Scatter**
 ```python
 def scatter(
@@ -323,7 +342,7 @@ To use them you must refer to them in code as:
 <span id="plot_markers"></span>
 These are the available plot colors:
 - INVISIBLE_MARKER
-- POINT_MARKER_MARKER
+- POINT_MARKER
 - CIRCLE_MARKER
 - TRIANGLE_DOWN_MARKER
 - TRIANGLE_UP_MARKER
