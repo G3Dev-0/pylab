@@ -283,13 +283,45 @@ You can also specify the width of the vertical error bars with y_err or leave it
 Plots a line with a given slope, and intercept.\
 You can specify from where to `start`, where to `end` and the amount of sample points per unit (`resolution`).
 
-+ `function(f, start:float, end:float, resolution:int, z_index:int=1, color:int=GREEN_COLOR, alpha:float=1.0, label:str=None)`:\
-Plots a given one-variable function (`f`).\
-You can specify from where to `start`, where to `end` and the amount of sample points per unit (`resolution`).
+<span id="function"></span>
+
++ **Function**
+```python
+def function(
+        # plot data
+        f,
+        function_parameters:list[float] | None,
+        
+        # functions specific data
+        start:float,
+        end:float,
+        resolution:int,
+
+        # line style
+        line_style:str=CONTINUOUS_LINE,
+        
+        # color
+        color:str=GREEN_COLOR,
+
+        # others
+        z_index:int=2,
+        alpha:float=1.0,
+        label:str=None) -> plt :
+```
+Plots a given function.\\
+You can specify from where to start, where to end and the amount of sample points (resolution) per unit.\\
+You can also give a label that will be displayed in the legend for this plot.\\
+You can set the z index and the color.
+Function repated arguments:
+- f (function) : the function to plot. IT MUST TAKE A SINGLE FLOAT AS INDIPENDENT VARIABLE AND A RETURN A SINGLE FLOAT.\
+    ALL THE OTHER COEFFICIENTS CAN BE PASSED THROUGH A LIST (see function_parameters)
+- function_parameters (list[float] | None) : a list containing additional function parameters (this can be None if the function does not take other parameters apart from the indipendent variable)
+
 *Note*: `f` must be a function such as:
 ```python
-def f(x : float) -> float :
-    return x + 5
+def f(x : float, parameters:list[float]) -> float :
+    value = some calculations
+    return value
 ```
 
 <span id="gaussian"></span>
@@ -684,6 +716,8 @@ Here are some examples for the **plot** modure uses.
 <span id="plot_examples_generic_function"></span>
 
 ### 10.1.1 Plotting a generic function [#](#toc)
+
+#### Non parametric function
 ```python
 import scripts.plot as plot
 
@@ -703,6 +737,33 @@ plot.show()
 ```
 The result:
 ![alt text](./docs/images/parabola_plot.png)
+
+#### Parametric function
+```python
+import scripts.plot as plot
+
+def polynome(x, parameters:list):
+    a_x_3 = parameters[0] * (x ** 3)
+    b_x_2 = parameters[1] * (x ** 2)
+    c_x = parameters[2] * x
+    d = parameters[3]
+    return a_x_3 + b_x_2 + c_x + d
+
+def plot_polynomial_function(parameters, color):
+    plot.function(polynome, parameters, -100, 100, 10, color=color, label=f"a={parameters[0]}, b={parameters[1]}, c={parameters[2]}, d={parameters[3]}")
+
+plot_polynomial_function([-9, -1, 2, 2], plot.RED_COLOR)
+plot_polynomial_function([4, -3, -4, 1], plot.GREEN_COLOR)
+plot_polynomial_function([-5, 7, 0, -8], plot.BLUE_COLOR)
+
+plot.set_title("Polynomial function")
+plot.set_axes("x", "y")
+plot.enable_grid()
+plot.enable_legend()
+plot.show()
+```
+The result:
+![alt text](./docs/images/polynomial_plot.png)
 
 <span id="plot_examples_gaussian_distribution"></span>
 
